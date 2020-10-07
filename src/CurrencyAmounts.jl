@@ -18,7 +18,6 @@ macro currencies(syms)
     end
 end
 
-
 struct CurrencyAmount{T <: Number, C <: Currency}
     amount:: T
 end
@@ -48,6 +47,10 @@ Base.Broadcast.broadcastable(c:: CurrencyAmount) = Ref(c) # treat it as a scalar
 
 struct ExchangeRate{T <: Number, BaseCurrency <: Currency, QuoteCurrency <: Currency}
     rate:: T
+    function ExchangeRate{T, C1, C2}(x) where {T, C1, C2}
+        C1 == C2 && error("currencies must be different")
+        new{T, C1, C2}(x)
+    end
 end
 
 Base.Broadcast.broadcastable(c:: ExchangeRate) = Ref(c) # treat it as a scalar in broadcasting

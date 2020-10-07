@@ -32,6 +32,7 @@ using Test
     @test 1/rate_eur_usd == ExchangeRate{Float64,Currency{:USD},Currency{:EUR}}(1/1.2)
     @test rate_eur_usd + 2*rate_eur_usd == 3*rate_eur_usd
     @test ExchangeRate(2.2, EUR, USD) - rate_eur_usd ≈ ExchangeRate(1.0, EUR, USD)
+    @test_throws ErrorException ExchangeRate(1, EUR, EUR)
 
     # currency conversions
     @test 3EUR * rate_eur_usd ≈ 3.6USD
