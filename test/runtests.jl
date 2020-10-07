@@ -1,8 +1,7 @@
 using CurrencyAmounts
 using Test
 
-const USD = Currency("usd")
-const EUR = Currency("eur")
+@currencies USD, EUR
 
 @testset "CurrencyAmounts.jl" begin
     
@@ -23,8 +22,8 @@ const EUR = Currency("eur")
     @test_throws MethodError 4USD - 3EUR
 
     # exchange rates
-    rate_eur_usd = ExchangeRate(1.2, EUR, USD)
-    @test rate_eur_usd == ExchangeRate{Float64,Currency{:EUR},Currency{:USD}}(1.2)
+    rate_eur_usd = 1.2USD / 1EUR
+    @test rate_eur_usd == ExchangeRate{Float64,Currency{:EUR},Currency{:USD}}(1.2) == ExchangeRate(1.2, EUR, USD)
     @test 2.4USD / 2EUR == rate_eur_usd
     @test rate_eur_usd * 2 == 2.4USD / 1EUR
     @test rate_eur_usd/2 == ExchangeRate{Float64,Currency{:EUR},Currency{:USD}}(0.6)

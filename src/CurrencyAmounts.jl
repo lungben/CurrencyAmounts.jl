@@ -1,13 +1,23 @@
 module CurrencyAmounts
 
-export Currency, CurrencyAmount, ExchangeRate
+export Currency, CurrencyAmount, ExchangeRate, @currencies
 
 import Base: +, -, *, /, ≈
 
 struct Currency{T} end
-Currency(c:: AbstractString) = Currency{Symbol(uppercase(c))}()
+Currency(c:: Symbol) = Currency{c}()
+Currency(c:: AbstractString) = Currency(Symbol(c))
 
 Base.Broadcast.broadcastable(c:: Currency) = Ref(c) # treat it as a scalar in broadcasting
+
+macro currencies(syms)
+    args = syms isa Expr ? syms.args : [syms]
+    for nam in args
+        ccy = CurrencyAmounts.Currency{nam}()
+        @eval __module__ const $nam = $ccy
+    end
+end
+
 
 struct CurrencyAmount{T <: Number, C <: Currency}
     amount:: T
@@ -46,6 +56,7 @@ ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <:
 
 # in a currency fraction, the QuoteCurrency is the numerator and the BaseCurrency the denominator
 /(x:: CurrencyAmount{T1, C1}, y:: CurrencyAmount{T2, C2}) where {C1 <: Currency, C2 <: Currency, T1 <: Number, T2 <: Number} = ExchangeRate(x.amount/y.amount, C2(), C1())
+/(x:: CurrencyAmount, y:: Currency) = x / CurrencyAmount(1, y) # allowing syntax 1.2EUR/USD
 
 # exchange rate arithmetics
 *(x:: ExchangeRate{T1, C1, C2}, y:: Number) where {C1 <: Currency, C2 <: Currency, T1 <: Number} = ExchangeRate(x.rate * y, C1(), C2())
