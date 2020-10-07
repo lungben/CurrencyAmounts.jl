@@ -9,6 +9,7 @@ Currency(c:: Symbol) = Currency{c}()
 Currency(c:: AbstractString) = Currency(Symbol(c))
 
 Base.Broadcast.broadcastable(c:: Currency) = Ref(c) # treat it as a scalar in broadcasting
+Base.show(io:: IO, c:: Currency{T}) where {T} = print(io, string(T))
 
 macro currencies(syms)
     args = syms isa Expr ? syms.args : [syms]
@@ -25,6 +26,7 @@ end
 CurrencyAmount(x:: Number, ::C) where C <: Currency = CurrencyAmount{typeof(x), C}(x)
 
 Base.Broadcast.broadcastable(c:: CurrencyAmount) = Ref(c) # treat it as a scalar in broadcasting
+Base.show(io:: IO, c:: CurrencyAmount{<: Number, C}) where {C} = print(io, c.amount, " ", C())
 ≈(x:: CurrencyAmount{T1, C}, y:: CurrencyAmount{T2, C}) where {C <: Currency, T1 <: Number, T2 <: Number} = x.amount ≈ y.amount
 
 # construction of CurrencyAmount using multiplication
@@ -35,6 +37,7 @@ Base.Broadcast.broadcastable(c:: CurrencyAmount) = Ref(c) # treat it as a scalar
 # Addition and subtraction are only defined between equal currencies
 +(x:: CurrencyAmount{T1, C}, y:: CurrencyAmount{T2, C}) where {C <: Currency, T1 <: Number, T2 <: Number} = CurrencyAmount(x.amount + y.amount, C())
 -(x:: CurrencyAmount{T1, C}, y:: CurrencyAmount{T2, C}) where {C <: Currency, T1 <: Number, T2 <: Number} = CurrencyAmount(x.amount - y.amount, C())
+-(x:: CurrencyAmount{T1, C}) where {C <: Currency, T1 <: Number} = CurrencyAmount(-x.amount, C())
 
 *(x:: CurrencyAmount{T1, C}, y:: Number) where {C <: Currency, T1 <: Number} = CurrencyAmount(x.amount * y, C())
 *(x:: Number, y:: CurrencyAmount) = y*x
@@ -49,11 +52,13 @@ struct ExchangeRate{T <: Number, BaseCurrency <: Currency, QuoteCurrency <: Curr
     rate:: T
     function ExchangeRate{T, C1, C2}(x) where {T, C1, C2}
         C1 == C2 && error("currencies must be different")
+        x > 0 || error("exchange rate must be positive")
         new{T, C1, C2}(x)
     end
 end
 
 Base.Broadcast.broadcastable(c:: ExchangeRate) = Ref(c) # treat it as a scalar in broadcasting
+Base.show(io:: IO, c:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = print(io, c.rate, " ", C2(), "/", C1())
 
 ## Exchange Rates
 ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <: Currency, QuoteCurrency <: Currency} = ExchangeRate{typeof(x), BaseCurrency, QuoteCurrency}(x)
@@ -73,11 +78,17 @@ ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <:
 +(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate + y.rate, C1(), C2())
 -(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate - y.rate, C1(), C2())
 
-# currency conversions
+## currency conversions
 
+# conversions using arithmetics
 *(x:: CurrencyAmount{<: Number, C1}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = CurrencyAmount(x.amount * y.rate, C2())
 *(x:: ExchangeRate, y:: CurrencyAmount) = y*x
 
 /(x:: CurrencyAmount{<: Number, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = CurrencyAmount(x.amount / y.rate, C1())
+
+# explicit "smart" conversions
+Base.convert(:: C2, amount:: CurrencyAmount{<: Number, C1}, rate:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = amount * rate
+Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C2}, rate:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = amount / rate
+Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C1}, :: ExchangeRate) where {C1 <: Currency} = amount # source and target currency are equal, do nothing
 
 end
