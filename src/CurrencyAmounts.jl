@@ -43,6 +43,9 @@ Base.Broadcast.broadcastable(c:: CurrencyAmount) = Ref(c) # treat it as a scalar
 # only division of a CurrencyAmount by a scalar is defined, not vice versa because this would give dimension of 1/Currency.
 /(x:: CurrencyAmount{T1, C}, y:: Number) where {C <: Currency, T1 <: Number} = CurrencyAmount(x.amount / y, C())
 
+# division of 2 amounts with the same currency gives a dimensionless result
+/(x:: CurrencyAmount{<: Number, C}, y:: CurrencyAmount{<: Number, C}) where {C <: Currency} = x.amount / y.amount
+
 struct ExchangeRate{T <: Number, BaseCurrency <: Currency, QuoteCurrency <: Currency}
     rate:: T
 end

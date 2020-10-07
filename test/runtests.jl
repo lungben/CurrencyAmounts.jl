@@ -14,6 +14,8 @@ using Test
     @test 4*4.5USD * 2 == 36.0USD
     @test 8USD / 2 == 4.0USD
     @test 8USD / 2 ≈ 4.0USD
+    @test 6EUR / 3EUR == 2.0
+    @test 4USD/USD == 4.0
 
     # invalid operations
     @test_throws MethodError 2 / 8USD
