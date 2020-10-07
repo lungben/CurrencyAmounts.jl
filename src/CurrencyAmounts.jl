@@ -90,5 +90,17 @@ ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <:
 Base.convert(:: C2, amount:: CurrencyAmount{<: Number, C1}, rate:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = amount * rate
 Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C2}, rate:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = amount / rate
 Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C1}, :: ExchangeRate) where {C1 <: Currency} = amount # source and target currency are equal, do nothing
+Base.convert(::Currency, ::CurrencyAmount, ::ExchangeRate) = missing
+
+function Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C2}, itr) where {C1 <: Currency, C2 <: Currency}
+    for exchange_rate in itr
+        exchange_rate isa ExchangeRate || error("iterable must contain exchange rates")
+        res = convert(C1(), amount, exchange_rate)
+        if !ismissing(res)
+            return res
+        end
+    end
+    return missing
+end
 
 end
