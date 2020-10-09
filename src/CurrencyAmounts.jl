@@ -3,6 +3,7 @@ module CurrencyAmounts
 export Currency, CurrencyAmount, ExchangeRate, @currencies
 
 import Base: +, -, *, /, ≈, zero, isless
+import Statistics
 
 """
 Currency type, e.g. EUR, USD.
@@ -61,6 +62,7 @@ Base.show(io:: IO, c:: CurrencyAmount{<: Number, C}) where {C} = print(io, c.amo
 zero(c ::CurrencyAmount) = zero(typeof(c))
 zero(::Type{CurrencyAmount{T, C}}) where {C <: Currency, T <: Number} = CurrencyAmount(zero(T), C())
 isless(c1:: CurrencyAmount{<: Number, C}, c2:: CurrencyAmount{<: Number, C}) where {C} = c1.amount < c2.amount
+Statistics.middle(c1 ::CurrencyAmount, c2:: CurrencyAmount) = (c1 + c2)/2
 
 # construction of CurrencyAmount using multiplication
 *(x:: Number, c:: Currency) = CurrencyAmount(x, c)
@@ -102,6 +104,7 @@ Base.show(io:: IO, c:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = print(i
 ## Exchange Rates
 ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <: Currency, QuoteCurrency <: Currency} = ExchangeRate{typeof(x), BaseCurrency, QuoteCurrency}(x)
 isless(x1:: ExchangeRate{<: Number, C1, C2}, x2:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = x1.rate < x2.rate
+Statistics.middle(c1 ::ExchangeRate, c2:: ExchangeRate) = (c1 + c2)/2
 
 ≈(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = x.rate ≈ y.rate
 
