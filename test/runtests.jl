@@ -17,6 +17,7 @@ using Test
     @test 6EUR / 3EUR == 2.0
     @test 4USD/USD == 4.0
     @test -4USD == CurrencyAmounts.CurrencyAmount{Int64,Currency{:USD}}(-4)
+    @test zero(3EUR) == 0EUR
 
     # invalid operations
     @test_throws MethodError 2 / 8USD

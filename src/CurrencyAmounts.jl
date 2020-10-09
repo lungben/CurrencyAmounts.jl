@@ -58,6 +58,7 @@ CurrencyAmount(x:: Number, ::C) where C <: Currency = CurrencyAmount{typeof(x), 
 Base.Broadcast.broadcastable(c:: CurrencyAmount) = Ref(c) # treat it as a scalar in broadcasting
 Base.show(io:: IO, c:: CurrencyAmount{<: Number, C}) where {C} = print(io, c.amount, " ", C())
 ≈(x:: CurrencyAmount{T1, C}, y:: CurrencyAmount{T2, C}) where {C <: Currency, T1 <: Number, T2 <: Number} = x.amount ≈ y.amount
+zero(::CurrencyAmount{T, C}) where {C <: Currency, T <: Number} = CurrencyAmount(zero(T), C())
 
 # construction of CurrencyAmount using multiplication
 *(x:: Number, c:: Currency) = CurrencyAmount(x, c)
