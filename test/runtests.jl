@@ -26,6 +26,8 @@ using Test
 
     @test Statistics.middle(4EUR, 5EUR) == 4.5EUR
     @test median([2EUR, 4EUR, 5EUR, 8EUR]) == 4.5EUR
+    @test isnan(4EUR) == false
+    @test isnan(NaN*EUR) == true
 
     # invalid operations
     @test_throws MethodError 2 / 8USD
@@ -46,6 +48,7 @@ using Test
     @test_throws ErrorException ExchangeRate(-1, EUR, USD)
 
     @test Statistics.middle(rate_eur_usd, 2*rate_eur_usd) == 1.5rate_eur_usd
+    @test isnan(rate_eur_usd) == false
 
     # currency conversions
     @test 3EUR * rate_eur_usd ≈ 3.6USD
