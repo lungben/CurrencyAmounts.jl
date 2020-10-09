@@ -1,7 +1,7 @@
 using CurrencyAmounts
 using Test
 
-@currencies USD, EUR, GBP
+@currencies USD, EUR, GBP, CHF
 
 @testset "CurrencyAmounts.jl" begin
     
@@ -57,8 +57,8 @@ using Test
     @test convert(USD, 4USD, 1.2USD/EUR) == 4USD
     @test convert(GBP, 4USD, 1.2USD/EUR) === missing
 
-    exchange_rates = (1.2USD/EUR, 1.3EUR/GBP)
+    exchange_rates = (1.2USD/EUR, 1.3EUR/GBP, 1.56USD/GBP)
     @test convert(GBP, 5.2EUR, exchange_rates) == 4.0GBP
-    @test convert(GBP, 5.2USD, exchange_rates) === missing # this exchange rate is not given, no automatic triangulation performed
+    @test convert(CHF, 5.2USD, exchange_rates) === missing # this exchange rate is not given, no automatic triangulation performed
 
 end
