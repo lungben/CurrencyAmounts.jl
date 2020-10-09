@@ -2,7 +2,7 @@ module CurrencyAmounts
 
 export Currency, CurrencyAmount, ExchangeRate, @currencies
 
-import Base: +, -, *, /, ≈
+import Base: +, -, *, /, ≈, zero
 
 """
 Currency type, e.g. EUR, USD.
