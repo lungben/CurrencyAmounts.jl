@@ -19,6 +19,9 @@ using Test
     @test -4USD == CurrencyAmounts.CurrencyAmount{Int64,Currency{:USD}}(-4)
     @test zero(3EUR) == 0EUR
     @test zero(typeof(3.5EUR)) == 0.0EUR
+    @test 3EUR < 3.1EUR
+    @test 6.8USD > 6.7USD
+    @test_throws MethodError 2EUR < 5USD
 
     # invalid operations
     @test_throws MethodError 2 / 8USD
