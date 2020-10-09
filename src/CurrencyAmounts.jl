@@ -92,11 +92,6 @@ Exchange rate between two currencies.
 """
 struct ExchangeRate{T <: Number, BaseCurrency <: Currency, QuoteCurrency <: Currency}
     rate:: T
-    function ExchangeRate{T, C1, C2}(x) where {T, C1, C2}
-        C1 == C2 && error("currencies must be different")
-        x > 0 || error("exchange rate must be positive")
-        new{T, C1, C2}(x)
-    end
 end
 
 Base.Broadcast.broadcastable(c:: ExchangeRate) = Ref(c) # treat it as a scalar in broadcasting
@@ -104,6 +99,7 @@ Base.show(io:: IO, c:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = print(i
 
 ## Exchange Rates
 ExchangeRate(x:: Number, ::BaseCurrency, ::QuoteCurrency) where {BaseCurrency <: Currency, QuoteCurrency <: Currency} = ExchangeRate{typeof(x), BaseCurrency, QuoteCurrency}(x)
+ExchangeRate(x:: Number, ::C, ::C) where {C <: Currency} = error("currencies must be different")
 isless(x1:: ExchangeRate{<: Number, C1, C2}, x2:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = x1.rate < x2.rate
 Statistics.middle(c1 ::ExchangeRate, c2:: ExchangeRate) = (c1 + c2)/2
 isnan(x ::ExchangeRate) = isnan(x.rate)
