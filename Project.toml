@@ -1,7 +1,7 @@
 name = "CurrencyAmounts"
 uuid = "35f9db7c-caf0-4b8b-9aa8-b55447bc07d3"
 authors = ["Benjamin Lungwitz <benj.lung@googlemail.com> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"

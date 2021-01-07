@@ -23,6 +23,8 @@ using Test
     @test 3EUR < 3.1EUR
     @test 6.8USD > 6.7USD
     @test_throws MethodError 2EUR < 5USD
+    @test isfinite(3USD)
+    @test !isfinite(Inf * USD)
 
     @test Statistics.middle(4EUR, 5EUR) == 4.5EUR
     @test median([2EUR, 4EUR, 5EUR, 8EUR]) == 4.5EUR

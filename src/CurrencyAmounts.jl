@@ -2,7 +2,7 @@ module CurrencyAmounts
 
 export Currency, CurrencyAmount, ExchangeRate, @currencies
 
-import Base: +, -, *, /, ≈, zero, isless, isnan
+import Base: +, -, *, /, ≈, zero, isless, isnan, isfinite
 import Statistics
 
 """
@@ -64,6 +64,7 @@ zero(::Type{CurrencyAmount{T, C}}) where {C <: Currency, T <: Number} = Currency
 isless(c1:: CurrencyAmount{<: Number, C}, c2:: CurrencyAmount{<: Number, C}) where {C} = c1.amount < c2.amount
 Statistics.middle(c1 ::CurrencyAmount, c2:: CurrencyAmount) = (c1 + c2)/2
 isnan(c ::CurrencyAmount) = isnan(c.amount)
+isfinite(c ::CurrencyAmount) = isfinite(c.amount)
 
 # construction of CurrencyAmount using multiplication
 *(x:: Number, c:: Currency) = CurrencyAmount(x, c)
@@ -103,6 +104,7 @@ ExchangeRate(x:: Number, ::C, ::C) where {C <: Currency} = error("currencies mus
 isless(x1:: ExchangeRate{<: Number, C1, C2}, x2:: ExchangeRate{<: Number, C1, C2}) where {C1, C2} = x1.rate < x2.rate
 Statistics.middle(c1 ::ExchangeRate, c2:: ExchangeRate) = (c1 + c2)/2
 isnan(x ::ExchangeRate) = isnan(x.rate)
+isfinite(x ::ExchangeRate) = isfinite(x.rate)
 
 ≈(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = x.rate ≈ y.rate
 
