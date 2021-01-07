@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/lungben/CurrencyAmounts.jl.svg?branch=master)](https://travis-ci.com/lungben/CurrencyAmounts.jl)
+[![codecov](https://codecov.io/gh/lungben/CurrencyAmounts.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/lungben/CurrencyAmounts.jl)
+
 # CurrencyAmounts
 
 When working with currency amounts and exchange rates, it is very easy to do mistakes, e.g. summing up amounts in different currencies or applying an exchange rate for currency conversion in the wrong direction (what does 1.2 EURUSD mean again???).
