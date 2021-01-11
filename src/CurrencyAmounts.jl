@@ -5,6 +5,8 @@ export Currency, CurrencyAmount, ExchangeRate, @currencies
 import Base: +, -, *, /, ≈, zero, isless, isnan, isfinite
 import Statistics
 
+using RecipesBase
+
 """
 Currency type, e.g. EUR, USD.
 """
@@ -157,5 +159,17 @@ function Base.convert(:: C1, amount:: CurrencyAmount{<: Number, C2}, itr) where 
     end
     return missing
 end
+
+# plotting
+@recipe function plot(x, y:: AbstractVector{CurrencyAmount{T, C}}) where {T, C <: Currency}
+    yguide --> C()
+    x, getproperty.(y, :amount)
+end
+
+@recipe function plot(x, y:: AbstractVector{ExchangeRate{T, BaseCurrency, QuoteCurrency}}) where {T, BaseCurrency <: Currency, QuoteCurrency <: Currency}
+    yguide --> string(QuoteCurrency(), " / ", BaseCurrency())
+    x, getproperty.(y, :rate)
+end
+
 
 end
