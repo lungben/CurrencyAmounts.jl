@@ -48,6 +48,10 @@ using Test
     @test ExchangeRate(2.2, EUR, USD) - rate_eur_usd ≈ ExchangeRate(1.0, EUR, USD)
     @test_throws ErrorException ExchangeRate(1, EUR, EUR)
 
+    @test rate_eur_usd / rate_eur_usd == 1
+    @test (2.4USD / EUR) / rate_eur_usd == 2
+
+
     @test Statistics.middle(rate_eur_usd, 2*rate_eur_usd) == 1.5rate_eur_usd
     @test isnan(rate_eur_usd) == false
 

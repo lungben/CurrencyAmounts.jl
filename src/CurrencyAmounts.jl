@@ -120,8 +120,12 @@ isfinite(x ::ExchangeRate) = isfinite(x.rate)
 
 /(x:: ExchangeRate{T1, C1, C2}, y:: Number) where {C1 <: Currency, C2 <: Currency, T1 <: Number} = ExchangeRate(x.rate / y, C1(), C2())
 /(y:: Number, x:: ExchangeRate{T1, C1, C2}) where {C1 <: Currency, C2 <: Currency, T1 <: Number} = ExchangeRate(y / x.rate, C2(), C1())
+
 +(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate + y.rate, C1(), C2())
 -(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate - y.rate, C1(), C2())
+
+# division of 2 consistent exchange rates gives a scalar
+/(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = x.rate / y.rate
 
 ## currency conversions
 
