@@ -127,6 +127,12 @@ isfinite(x ::ExchangeRate) = isfinite(x.rate)
 # division of 2 consistent exchange rates gives a scalar
 /(x:: ExchangeRate{<: Number, C1, C2}, y:: ExchangeRate{<: Number, C1, C2}) where {C1 <: Currency, C2 <: Currency} = x.rate / y.rate
 
+# exchange rate triangulation
+/(x:: ExchangeRate{<: Number, BaseCurrency1, QuoteCurrency}, y:: ExchangeRate{<: Number, BaseCurrency2, QuoteCurrency}) where {QuoteCurrency <: Currency, BaseCurrency1 <: Currency, BaseCurrency2 <: Currency} = ExchangeRate(x.rate / y.rate, BaseCurrency1(), BaseCurrency2())
+/(x:: ExchangeRate{<: Number, BaseCurrency, QuoteCurrency1}, y:: ExchangeRate{<: Number, BaseCurrency, QuoteCurrency2}) where {QuoteCurrency1 <: Currency, QuoteCurrency2 <: Currency, BaseCurrency <: Currency} = ExchangeRate(x.rate / y.rate, QuoteCurrency2(), QuoteCurrency1())
+*(x:: ExchangeRate{<: Number, C_both, C1}, y:: ExchangeRate{<: Number, C2, C_both}) where {C_both <: Currency, C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate * y.rate, C2(), C1())
+*(x:: ExchangeRate{<: Number, C1, C_both}, y:: ExchangeRate{<: Number, C_both, C2}) where {C_both <: Currency, C1 <: Currency, C2 <: Currency} = ExchangeRate(x.rate * y.rate, C1(), C2())
+
 ## currency conversions
 
 # conversions using arithmetics

@@ -51,6 +51,11 @@ using Test
     @test rate_eur_usd / rate_eur_usd == 1
     @test (2.4USD / EUR) / rate_eur_usd == 2
 
+    # triangulation
+    @test (1.2USD/EUR) / (0.8USD/GBP) ≈ (1.2/0.8)*GBP/EUR
+    @test (1.2USD/EUR) / (1.1GBP/EUR) ≈ (1.2/1.1)*USD/GBP
+    @test (1.2USD/EUR) * (2.2EUR/GBP) ≈ (1.2*2.2)*USD/GBP
+    @test (1.2USD/EUR) * (1.1GBP/USD) ≈ (1.2*1.1)*GBP/EUR
 
     @test Statistics.middle(rate_eur_usd, 2*rate_eur_usd) == 1.5rate_eur_usd
     @test isnan(rate_eur_usd) == false
